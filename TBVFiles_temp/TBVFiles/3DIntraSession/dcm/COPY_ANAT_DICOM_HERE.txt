@@ -1,0 +1,1 @@
+the dicom files of the anatomical scans need to be renamed to perform preprocessing in TBV. To avoid that the renaming affects the name of the EPI dicom files, we recommend to copy the anatomical dicom files and perform all the preprocessing steps within this folder.
