@@ -109,7 +109,7 @@ def generate_random_sequence_2cond_maxCons(condition1, condition2, length, balan
 
     return sequence
 
-def shuffle_without_consecutive_duplicates(arr):
+def shuffle_without_consecutive_duplicates_old(arr):
 
     while True:
         shuffled_arr = arr.copy()
@@ -118,5 +118,21 @@ def shuffle_without_consecutive_duplicates(arr):
         # check  if any consecutive elements are the same emotion
         if all(x.split('_')[0] != y.split('_')[0] for x, y in zip(shuffled_arr, shuffled_arr[1:])):
             return shuffled_arr
+
+def shuffle_without_consecutive_duplicates(arr):
+
+    n = len(arr)
+    while True:
+        # create a list of indices and shuffle them
+        indices = list(range(n))
+        random.shuffle(indices)
+
+        # apply the shuffled indices to arr
+        shuffled_arr = [arr[i] for i in indices]
+
+        # check condition
+        if all(x.split('_')[0] != y.split('_')[0]
+               for x, y in zip(shuffled_arr, shuffled_arr[1:])):
+            return shuffled_arr, indices
 
 
