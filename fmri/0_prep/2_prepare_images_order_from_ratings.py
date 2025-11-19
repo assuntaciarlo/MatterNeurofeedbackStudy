@@ -23,11 +23,11 @@ from utils.randomise import generate_random_sequence_2cond_maxCons, shuffle_with
 #   User should change this before running the script!!!           #
 ####################################################################
 
-SESSION_NR = 2
+SESSION_NR = 1
 NR_LOC_RUNS = 0
-NR_NF_RUNS = 4
+NR_NF_RUNS = 0
 NR_TRANS_RUNS = 0
-NR_RECALL_RUNS = 0
+NR_RECALL_RUNS = 1
 NR_BLOCKS = 16
 
 ####################################################################
@@ -36,7 +36,7 @@ NR_BLOCKS = 16
 sub_name = input('Insert the subject name: ')
 group = input('Insert group (matter or stock): ')
 
-wdir = f'C:/Users/assun/Documents/GitHub/MatterNeurofeedbackStudy/example_data/behavioural/initial_ratings/{sub_name}'
+wdir = f'C:/Users/assun/Documents/GitHub/MatterNeurofeedbackStudy/example_data_local/behavioural/initial_ratings/{sub_name}'
 outdir = f'C:/Users/assun/Documents/GitHub/MatterNeurofeedbackStudy/example_data/stim_prep/{sub_name}'
 
 # make directory for the current subject in data
@@ -201,20 +201,22 @@ elif group == 'matter':
 
         # for stock pictures we can simply randomise and duplicate the frequency of each image
         images_NF_temp = emo_order.copy() #images + emotion label
-        images_NF_temp = shuffle_without_consecutive_duplicates(images_NF_temp)
+        images_NF_temp, indices = shuffle_without_consecutive_duplicates(images_NF_temp)
 
         #remove emotion label
         images_NF_temp = [item.split('_')[1] for item in images_NF_temp]
 
-
-        # choose which image should be scrambled (4 per run)
-        scramble_idx = np.arange(len(images_NF_temp))
-        random.shuffle(scramble_idx)
-        scramble_idx = scramble_idx[:4]
+        # choose which image should be scrambled (4 per run), balance condition
+        # scramble_idx = np.arange(len(images_temp))
+        # random.shuffle(scramble_idx)
+        # scramble_idx = scramble_idx[:4]
+        scramble_idx = np.array([0, 2, 4, 6])
+        rand_ = np.array([random.randint(0, 1) for _ in range(4)])
+        scramble_idx = rand_ + scramble_idx
 
         images_NF = []
         for item_idx, item in enumerate(images_NF_temp):
-            if item_idx not in scramble_idx:
+            if indices[item_idx] not in scramble_idx:
                 images_NF.extend([item] * 2)
             else:
                 scramble_img_pos = np.array([0, 1])  # decide if the scramble image is the first or the second presented
@@ -288,18 +290,21 @@ elif group == 'matter':
 
         # for stock pictures we can simply randomise and duplicate the frequency of each image
         images_temp = images_list_recall.copy()
-        images_temp = shuffle_without_consecutive_duplicates(images_temp)
+        images_temp, indices = shuffle_without_consecutive_duplicates(images_temp)
 
         images_temp = [item.split('_')[1] for item in images_temp]
 
-        # choose which image should be scrambled (4 per run)
-        scramble_idx = np.arange(len(images_temp))
-        random.shuffle(scramble_idx)
-        scramble_idx = scramble_idx[:4]
+        # choose which image should be scrambled (4 per run), balance condition
+        #scramble_idx = np.arange(len(images_temp))
+        # random.shuffle(scramble_idx)
+        # scramble_idx = scramble_idx[:4]
+        scramble_idx = np.array([0,2,4,6])
+        rand_ = np.array([random.randint(0, 1) for _ in range(4)])
+        scramble_idx = rand_ + scramble_idx
 
         images_NF = []
         for item_idx, item in enumerate(images_temp):
-            if item_idx not in scramble_idx:
+            if indices[item_idx] not in scramble_idx:
                 images_NF.extend([item] * 2)
             else:
                 scramble_img_pos = np.array([0, 1])  # decide if the scramble image is the first or the second presented
@@ -331,18 +336,21 @@ elif group == 'matter':
 
         # for stock pictures we can simply randomise and duplicate the frequency of each image
         images_temp = images_list_recall.copy()
-        images_temp = shuffle_without_consecutive_duplicates(images_temp)
+        images_temp, indices = shuffle_without_consecutive_duplicates(images_temp)
 
         images_temp = [item.split('_')[1] for item in images_temp]
 
-        # choose which image should be scrambled (4 per run)
-        scramble_idx = np.arange(len(images_temp))
-        random.shuffle(scramble_idx)
-        scramble_idx = scramble_idx[:4]
+        # choose which image should be scrambled (4 per run), balance condition
+        # scramble_idx = np.arange(len(images_temp))
+        # random.shuffle(scramble_idx)
+        # scramble_idx = scramble_idx[:4]
+        scramble_idx = np.array([0, 2, 4, 6])
+        rand_ = np.array([random.randint(0, 1) for _ in range(4)])
+        scramble_idx = rand_ + scramble_idx
 
         images_NF = []
         for item_idx, item in enumerate(images_temp):
-            if item_idx not in scramble_idx:
+            if indices[item_idx] not in scramble_idx:
                 images_NF.extend([item] * 2)
             else:
                 scramble_img_pos = np.array(
