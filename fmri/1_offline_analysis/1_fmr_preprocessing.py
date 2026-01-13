@@ -19,6 +19,7 @@ It is meant to be used with 2 Localiser runs from the first session to prepare t
 import glob, os
 import math
 import shutil
+from bvbabel import fmr
 
 ################################################################################
 #                                USER INPUTS                                   #
@@ -28,9 +29,9 @@ wdir = 'D:/MatterNeurofeedback/raw_data/StandardNF'
 outdir = 'D:/MatterNeurofeedback/derivatives/rawdata_bv'
 
 # Indicate subject ID and the series number for
-sub = 'sub-12'
-loc_ser_nr1 = '16'
-loc_ser_nr2 = '20'
+sub = 'sub-16'
+loc_ser_nr1 = '13'
+loc_ser_nr2 = '17'
 
 # Functional images info
 loc_ser_num = [loc_ser_nr1, loc_ser_nr2]
@@ -60,7 +61,6 @@ os.makedirs(procdir, exist_ok=True)
 
 fmr_names = [f'{sub}_ses-01_dir-AP_task-localiser2_run-02', f'{sub}_ses-01_dir-AP_task-localiser3_run-03']
 
-
 ################################################################################
 #                              START PREPROCESSING                             #
 ################################################################################
@@ -70,7 +70,7 @@ for i, cur_ser_nr in enumerate([loc_ser_nr1, loc_ser_nr2]):
 
     dcm_format = f'00*_{cur_ser_nr.zfill(6)}_000*'
 
-    dicom_files = glob.glob(f'{wdir}/{sub}/ses-01/tbv/*/{dcm_format}')
+    dicom_files = glob.glob(f'{wdir}/{sub}/ses-01/tbv/{dcm_format}')
     print(f'\nWorking on series number {cur_ser_nr}')
     print(f'\nFound {len(dicom_files)} files.')
 
@@ -115,13 +115,19 @@ for i, cur_ser_nr in enumerate([loc_ser_nr1, loc_ser_nr2]):
     print('\nStart HPF for {}'.format(path_run))
     docFMR=bv.open(Fnme_newFMR)
     docFMR.filter_temporal_highpass_fft(HPF_CUTOFF,'Hz')
+    Fnme_newFMR = docFMR.preprocessed_fmr_name
     docFMR.close()
-    
-    # TO DO: Rename the temporal filtering file to _LTR_THPFFT0.0090Hz.fmr to avoid confusions (BV will round the cut-off to 0.01 via scripting)
+
+    #change naming
+    hdr, data = fmr.read_fmr(Fnme_newFMR)
+    new_filename = Fnme_newFMR[:-13] + 'LTR_THPFFT0.0090Hz.fmr'
+    fmr.write_fmr(new_filename, hdr, data)
+
+    # delete old files
+    os.remove(Fnme_newFMR)
+    os.remove(Fnme_newFMR[:-4]+'.stc')
 
     # 4// Smoothing
-    # TO DO: add here code for smoothing from the renamed files
-
-
-
-
+    docFMR = bv.open(new_filename)
+    docFMR.smooth_spatial(3.6, 'mm')
+    docFMR.close()
